@@ -1,0 +1,14 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+
+    defaultConfig {
+        applicationId "tool.xfy9326.apkinstaller"
+        minSdkVersion 19
+        //noinspection OldTargetApi
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+    }
+}
