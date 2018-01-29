@@ -30,16 +30,20 @@ public class InstallActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (PermissionMethod.verifyStoragePermissions(this)) {
-            if (BaseMethod.hasADB(this)) {
+            checkEnv();
+        }
+    }
+
+    private void checkEnv() {
+        if (BaseMethod.hasADB(this)) {
+            startInstall(true);
+        } else {
+            if (BaseMethod.checkHasADB()) {
+                BaseMethod.setHasADB(this);
                 startInstall(true);
             } else {
-                if (BaseMethod.checkADB()) {
-                    BaseMethod.setHasADB(this);
-                    startInstall(true);
-                } else {
-                    Toast.makeText(this, R.string.adb_error, Toast.LENGTH_SHORT).show();
-                    finish();
-                }
+                Toast.makeText(this, R.string.adb_error, Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
     }
@@ -147,7 +151,7 @@ public class InstallActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PermissionMethod.REQUEST_EXTERNAL_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startInstall(true);
+                checkEnv();
             } else {
                 Toast.makeText(this, R.string.permission_error, Toast.LENGTH_SHORT).show();
                 finish();

@@ -11,6 +11,8 @@
         android:layout_margin="15dp"
         android:orientation="vertical"
         android:paddingEnd="0dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="0dp"
         android:paddingStart="20dp">
 
         <TextView
