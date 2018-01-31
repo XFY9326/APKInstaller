@@ -40,11 +40,8 @@ public class InstallActivity extends Activity {
         } else {
             if (BaseMethod.checkHasADB()) {
                 BaseMethod.setHasADB(this);
-                startInstall(true);
-            } else {
-                Toast.makeText(this, R.string.adb_error, Toast.LENGTH_SHORT).show();
-                finish();
             }
+            startInstall(true);
         }
     }
 

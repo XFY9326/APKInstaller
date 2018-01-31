@@ -12,6 +12,6 @@
     <string name="adb_ask_content">使用前请先开启设备的ADB网络调试，开启后方可使用本应用。\n未开启调试可能会导致本应用卡死，重启设备即可解决。\n具体开启方式因不同设备而异。</string>
     <string name="adb_ask_yes">我已开启ADB网络调试</string>
     <string name="adb_ask_no">取消应用安装</string>
-    <string name="adb_error">该设备不包含ADB命令，本应用无法使用！</string>
     <string name="adb_no_device">ADB未找到设备</string>
+    <string name="adb_no_port">ADB网络调试端口未打开</string>
 </resources>
