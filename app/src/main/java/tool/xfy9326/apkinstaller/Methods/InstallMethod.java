@@ -11,11 +11,9 @@ import java.io.StringWriter;
 
 import tool.xfy9326.apkinstaller.R;
 
-import static java.lang.Thread.sleep;
-
 public class InstallMethod {
 
-    public static void installApk(final Activity activity, final Dialog installDialog, final String apkPath, final String apkName, final Drawable apkIcon) {
+    public static void installApk(final Activity activity, final Dialog installDialog, final String apkPath, final String apkName, final Drawable apkIcon, final String pkgName) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -24,7 +22,6 @@ public class InstallMethod {
                     try {
                         String result = installCommand(activity, path.trim());
                         if (result != null) {
-                            sleep(2000);
                             installDialog.cancel();
                             if (result.contains("\n")) {
                                 String temp[] = result.split("\n");
@@ -41,12 +38,12 @@ public class InstallMethod {
                                 showText = activity.getString(R.string.install_failed);
                                 showDetail = result;
                             }
-                            showStatus(activity, installDialog, showText, showDetail, apkName, apkIcon);
+                            showStatus(activity, installDialog, showText, showDetail, apkName, apkIcon, pkgName);
                         } else {
                             if (BaseMethod.hasADB(activity)) {
-                                showStatus(activity, installDialog, activity.getString(R.string.install_failed), activity.getString(R.string.adb_no_device), apkName, apkIcon);
+                                showStatus(activity, installDialog, activity.getString(R.string.install_failed), activity.getString(R.string.adb_no_device), apkName, apkIcon, pkgName);
                             } else {
-                                showStatus(activity, installDialog, activity.getString(R.string.install_failed), activity.getString(R.string.adb_no_port), apkName, apkIcon);
+                                showStatus(activity, installDialog, activity.getString(R.string.install_failed), activity.getString(R.string.adb_no_port), apkName, apkIcon, pkgName);
                             }
                         }
                     } catch (Exception e) {
@@ -56,7 +53,7 @@ public class InstallMethod {
                         } catch (Exception err) {
                             err.printStackTrace();
                         }
-                        showStatus(activity, installDialog, activity.getString(R.string.install_failed), ExceptionToString(e), apkName, apkIcon);
+                        showStatus(activity, installDialog, activity.getString(R.string.install_failed), ExceptionToString(e), apkName, apkIcon, pkgName);
                     }
                     IOMethod.cleanInstallTemp(activity);
                 }
@@ -101,12 +98,12 @@ public class InstallMethod {
         return device;
     }
 
-    private static void showStatus(final Activity activity, Dialog install, final String text, final String detail, final String apkName, final Drawable apkIcon) {
+    private static void showStatus(final Activity activity, Dialog install, final String text, final String detail, final String apkName, final Drawable apkIcon, final String pkgName) {
         install.cancel();
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                BaseMethod.showStatusDialog(activity, text, detail, apkName, apkIcon);
+                BaseMethod.showStatusDialog(activity, text, detail, apkName, apkIcon, pkgName);
             }
         });
     }

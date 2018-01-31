@@ -90,7 +90,7 @@ public class InstallActivity extends Activity {
         View view = layoutInflater.inflate(R.layout.dialog_content_before_install, (ViewGroup) findViewById(R.id.dialog_layout_before_install));
         String[] version = apkMethod.getApplicationVersion();
         String permission = apkMethod.getApplicationPermission();
-        String pkgName = apkMethod.getApplicationPkgName();
+        final String pkgName = apkMethod.getApplicationPkgName();
         TextView textView_version_now = view.findViewById(R.id.textView_version_now);
         textView_version_now.setText(version[0]);
         TextView textView_pkgname = view.findViewById(R.id.textView_pkgname);
@@ -114,7 +114,7 @@ public class InstallActivity extends Activity {
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                InstallMethod.installApk(InstallActivity.this, showInstallDialog(), Apk_Path, Apk_Name, Apk_Icon);
+                InstallMethod.installApk(InstallActivity.this, showInstallDialog(), Apk_Path, Apk_Name, Apk_Icon, pkgName);
             }
         });
         builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

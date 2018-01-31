@@ -4,18 +4,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 import tool.xfy9326.apkinstaller.R;
 
@@ -23,22 +21,7 @@ public class BaseMethod {
 
     public static boolean checkHasADB() {
         try {
-            Process process = Runtime.getRuntime().exec("sh");
-            BufferedWriter mOutputWriter = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-            BufferedReader mInputReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            mOutputWriter.write("adb\n");
-            mOutputWriter.flush();
-            mOutputWriter.write("exit\n");
-            mOutputWriter.flush();
-            process.waitFor();
-            String line;
-            StringBuilder result = new StringBuilder();
-            while ((line = mInputReader.readLine()) != null) {
-                result.append(line).append("\n");
-            }
-            mInputReader.close();
-            process.destroy();
-            return !result.toString().contains("adb: not found");
+            return !CommandMethod.runCommand(new String[]{"adb"}).contains("adb: not found");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,7 +48,7 @@ public class BaseMethod {
         sharedPreferences.edit().putBoolean("HAS_ADB", true).apply();
     }
 
-    static void showStatusDialog(final Activity activity, String text, String detail, String apkName, Drawable apkIcon) {
+    static void showStatusDialog(final Activity activity, String text, String detail, String apkName, Drawable apkIcon, final String pkgName) {
         LayoutInflater layoutInflater = activity.getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.dialog_content_install_status, (ViewGroup) activity.findViewById(R.id.dialog_layout_install_status));
         TextView textView_status = view.findViewById(R.id.textView_install_status);
@@ -77,9 +60,31 @@ public class BaseMethod {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(apkName);
         builder.setIcon(apkIcon);
-        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+        if (pkgName != null) {
+            PackageManager packageManager = activity.getPackageManager();
+            final Intent intent = packageManager.getLaunchIntentForPackage(pkgName);
+            if (intent != null) {
+                builder.setPositiveButton(R.string.open, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.startActivity(intent);
+                        activity.finish();
+                    }
+                });
+            }
+        }
+        builder.setNegativeButton(R.string.complete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                activity.finish();
+            }
+        });
+        builder.setNeutralButton(R.string.donate, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Uri uri = Uri.parse("https://QR.ALIPAY.COM/FKX04268ELODAA2RIXEW54");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                activity.startActivity(intent);
                 activity.finish();
             }
         });

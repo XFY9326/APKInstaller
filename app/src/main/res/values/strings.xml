@@ -14,4 +14,7 @@
     <string name="adb_ask_no">取消应用安装</string>
     <string name="adb_no_device">ADB未找到设备</string>
     <string name="adb_no_port">ADB网络调试端口未打开</string>
+    <string name="open">打开</string>
+    <string name="donate">捐赠</string>
+    <string name="complete">完成</string>
 </resources>

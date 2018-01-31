@@ -48,6 +48,7 @@ class CommandMethod {
         Process process = Runtime.getRuntime().exec("sh");
         BufferedWriter mOutputWriter = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
         BufferedReader mInputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        BufferedReader mErrorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
         for (String str : cmd) {
             mOutputWriter.write(str + "\n");
             mOutputWriter.flush();
@@ -60,6 +61,9 @@ class CommandMethod {
         while ((line = mInputReader.readLine()) != null) {
             result.append(line).append("\n");
         }
+        while ((line = mErrorReader.readLine()) != null) {
+            result.append(line).append("\n");
+        }
         mOutputWriter.close();
         mInputReader.close();
         process.destroy();
@@ -67,8 +71,8 @@ class CommandMethod {
     }
 
     private static int getADBPort() throws Exception {
-        String result = runCommand(new String[]{"getprop servive.adb.tcp.port"});
-        return Integer.parseInt(result);
+        String result = runCommand(new String[]{"getprop service.adb.tcp.port"});
+        return Integer.parseInt(result.trim());
     }
 
     private static boolean isPortUsed(int port) {
