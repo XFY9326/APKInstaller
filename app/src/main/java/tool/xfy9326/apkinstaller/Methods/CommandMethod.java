@@ -72,6 +72,9 @@ class CommandMethod {
 
     private static int getADBPort() throws Exception {
         String result = runCommand(new String[]{"getprop service.adb.tcp.port"});
+        if (result.trim().isEmpty()) {
+            return -1;
+        }
         return Integer.parseInt(result.trim());
     }
 

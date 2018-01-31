@@ -23,10 +23,6 @@ public class InstallMethod {
                         String result = installCommand(activity, path.trim());
                         if (result != null) {
                             installDialog.cancel();
-                            if (result.contains("\n")) {
-                                String temp[] = result.split("\n");
-                                result = temp[temp.length - 1];
-                            }
                             String showText;
                             String showDetail = null;
                             if (result.contains("Success")) {
