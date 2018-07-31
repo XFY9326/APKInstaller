@@ -9,11 +9,15 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Arrays;
 
 import tool.xfy9326.apkinstaller.Methods.ApkMethod;
 import tool.xfy9326.apkinstaller.Methods.BaseMethod;
@@ -87,9 +91,9 @@ public class InstallActivity extends Activity {
 
     private void showBeforeInstallDialog() {
         LayoutInflater layoutInflater = getLayoutInflater();
-        View view = layoutInflater.inflate(R.layout.dialog_content_before_install, (ViewGroup) findViewById(R.id.dialog_layout_before_install));
-        String[] version = apkMethod.getApplicationVersion();
-        String permission = apkMethod.getApplicationPermission();
+        final View view = layoutInflater.inflate(R.layout.dialog_content_before_install, (ViewGroup) findViewById(R.id.dialog_layout_before_install));
+        final String[] version = apkMethod.getApplicationVersion();
+        String[] permission = apkMethod.getApplicationPermission();
         final String pkgName = apkMethod.getApplicationPkgName();
         TextView textView_version_now = view.findViewById(R.id.textView_version_now);
         textView_version_now.setText(version[0]);
@@ -101,13 +105,29 @@ public class InstallActivity extends Activity {
             TextView textView_version_installed = view.findViewById(R.id.textView_version_installed);
             textView_version_installed.setText(version[1]);
         }
-        if (permission != null && !permission.isEmpty()) {
+        TextView textView_permission_text = view.findViewById(R.id.textView_permission_text);
+        if (permission != null && permission.length != 0) {
+            textView_permission_text.setText(getString(R.string.install_content_permission, permission.length));
             TextView textView_permission = view.findViewById(R.id.textView_permission);
-            textView_permission.setText(permission);
+            String output = Arrays.toString(permission);
+            output = output.substring(1, output.length() - 1);
+            output = output.replace(",", "\n");
+            textView_permission.setText(output);
         } else {
-            TextView textView_permission_text = view.findViewById(R.id.textView_permission_text);
             textView_permission_text.setVisibility(View.INVISIBLE);
         }
+        view.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    View contentView = ((ScrollView) v).getChildAt(0);
+                    if (contentView.getMeasuredHeight() <= v.getScrollY() + v.getHeight()) {
+                        v.setFocusable(false);
+                    }
+                }
+                return false;
+            }
+        });
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(Apk_Name);
         builder.setIcon(Apk_Icon);
@@ -127,6 +147,18 @@ public class InstallActivity extends Activity {
             @Override
             public void onCancel(DialogInterface dialog) {
                 finish();
+            }
+        });
+        builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                    if (!view.hasFocusable()) {
+                        view.setFocusable(true);
+                        view.requestFocus();
+                    }
+                }
+                return false;
             }
         });
         builder.setView(view);

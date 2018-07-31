@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
+
 public class ApkMethod {
     private final String applicationPath;
     private final PackageManager packageManager;
@@ -55,10 +57,11 @@ public class ApkMethod {
         return packageInfo.applicationInfo.loadIcon(packageManager);
     }
 
-    public String getApplicationPermission() {
+    public String[] getApplicationPermission() {
         PackageInfo packageInfo = packageManager.getPackageArchiveInfo(applicationPath, PackageManager.GET_PERMISSIONS);
         if (packageInfo != null) {
-            StringBuilder result = new StringBuilder();
+            ArrayList<String> result_a = new ArrayList<>();
+            ArrayList<String> result_b = new ArrayList<>();
             String[] allPermission = packageInfo.requestedPermissions;
             if (allPermission != null) {
                 if (allPermission.length != 0) {
@@ -66,14 +69,15 @@ public class ApkMethod {
                     for (String permissionName : allPermission) {
                         try {
                             permissionInfo = packageManager.getPermissionInfo(permissionName, 0);
-                            result.append(permissionInfo.loadLabel(packageManager).toString()).append("\n");
+                            result_a.add(permissionInfo.loadLabel(packageManager).toString());
                         } catch (PackageManager.NameNotFoundException e) {
                             e.printStackTrace();
-                            result.append(permissionName).append("\n");
+                            result_b.add(permissionName);
                         }
                     }
                 }
-                return result.toString();
+                result_a.addAll(result_b);
+                return result_a.toArray(new String[result_a.size()]);
             }
         }
         return null;
