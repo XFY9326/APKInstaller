@@ -65,7 +65,7 @@ public class InstallActivity extends Activity {
             Apk_Path = packageUri.getPath();
             apkMethod = new ApkMethod(this, Apk_Path);
             Apk_Name = apkMethod.getApplicationName();
-            Apk_Icon = apkMethod.getApplicationIcon();
+            Apk_Icon = apkMethod.getApplicationIcon(this);
         }
     }
 
